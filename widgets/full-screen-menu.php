@@ -1,183 +1,44 @@
 <?php
+
 namespace FullScreenMenuForElementor\Widgets;
 
 use Elementor\Widget_Base;
 use Elementor\Controls_Manager;
-use Elementor\Scheme_Color;
-use Elementor\Scheme_Typography;
-use Elementor\Group_Control_Typography;
 use Elementor\Group_Control_Background;
+use Elementor\Group_Control_Typography;
+use Elementor\Core\Kits\Documents\Tabs\Global_Typography;
 
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) exit;
 
-/**
- *  Full Screen Menu
- *
- * Elementor widget for Full Screen Menu.
- *
- * @since 1.0.0
- */
-class Full_Screen_Menu extends Widget_Base {
-
-	/**
-	 * Retrieve the widget name.
-	 *
-	 * @since 1.0.0
-	 *
-	 * @access public
-	 *
-	 * @return string Widget name.
-	 */
-	public function get_name() {
+class FullScreenMenu extends Widget_Base
+{
+	public function get_name()
+	{
 		return 'full-screen-menu-for-elementor';
 	}
 
-	/**
-	 * Retrieve the widget title.
-	 *
-	 * @since 1.0.0
-	 *
-	 * @access public
-	 *
-	 * @return string Widget title.
-	 */
-	public function get_title() {
+	public function get_title()
+	{
 		return __( 'Full Screen Menu', 'full-screen-menu-for-elementor' );
 	}
 
-	/**
-	 * Retrieve the widget icon.
-	 *
-	 * @since 1.0.0
-	 *
-	 * @access public
-	 *
-	 * @return string Widget icon.
-	 */
-	public function get_icon() {
-		return 'eicon-nav-menu';
+	public function get_icon()
+	{
+		return 'fsmfe-icon';
 	}
 
-	/**
-	 * Retrieve the list of categories the widget belongs to.
-	 *
-	 * Used to determine where to display the widget in the editor.
-	 *
-	 * Note that currently Elementor supports only one category.
-	 * When multiple categories passed, Elementor uses the first one.
-	 *
-	 * @since 1.0.0
-	 *
-	 * @access public
-	 *
-	 * @return array Widget categories.
-	 */
-	public function get_categories() {
-		return [ 'general-elements' ];
+	public function get_categories()
+	{
+		return [ 'general' ];
 	}
 
-	/**
-	 * Retrieve the list of styles the widget depended on.
-	 *
-	 * Used to set styles dependencies required to run the widget.
-	 *
-	 * @since 1.0.0
-	 *
-	 * @access public
-	 *
-	 * @return array Widget styles dependencies.
-	 */
-	public function get_style_depends() {
-		return [ 'fsmfe-frontend' ];
+	public function get_style_depends()
+	{
+		return [ 'full-screen-menu-style' ];
 	}
 
-	/**
-	 * Retrieve the list of scripts the widget depended on.
-	 *
-	 * Used to set scripts dependencies required to run the widget.
-	 *
-	 * @since 1.0.0
-	 *
-	 * @access public
-	 *
-	 * @return array Widget scripts dependencies.
-	 */
-	public function get_script_depends() {
-		return [ ];
-	}
-
-	/**
-	 * Get Saved Templates
-	 *
-	 * @since 1.0.2
-	 *
-	 * @access public
-	 * 
-	 * @return array
-	 */
-	public function get_saved_data( $type = 'page' ) {
-		$templates = $this->get_post_template( $type );
-
-		$options['0'] = __( 'Select Template', 'full-screen-menu-for-elementor' );
-
-		if ( count( $templates ) ) {
-			foreach ( $templates as $template ) {
-				$options[ $template['id'] ] = $template['name'];
-			}
-		} else {
-			$options['0'] = __( 'You haven\'t saved any templates yet.', 'full-screen-menu-for-elementor' );
-		}
-		return $options;
-	}
-
-	/**
-	 * Get Templates based on category
-	 *
-	 * @since 1.0.2
-	 * 
-	 * @access public
-	 * 
-	 * @return array
-	 */
-	public function get_post_template( $type = 'page' ) {
-		$posts = get_posts(
-			array(
-				'post_type' => 'elementor_library',
-				'orderby' => 'title',
-				'order' => 'ASC',
-				'posts_per_page' => '-1',
-				'tax_query' => array(
-					array(
-						'taxonomy' => 'elementor_library_type',
-						'field' => 'slug',
-						'terms' => $type,
-					),
-				),
-			)
-		);
-
-		$templates = array();
-
-		foreach ( $posts as $post ) {
-			$templates[] = array(
-				'id' => $post->ID,
-				'name' => $post->post_title,
-			);
-		}
-
-		return $templates;
-	}
-
-	/**
-	 * Register the widget controls.
-	 *
-	 * Adds different input fields to allow the user to change and customize the widget settings.
-	 *
-	 * @since 1.0.0
-	 *
-	 * @access protected
-	 */
-	protected function _register_controls() {
+	protected function register_controls()
+	{
 		$this->start_controls_section(
 			'content',
 			[
@@ -543,7 +404,7 @@ class Full_Screen_Menu extends Widget_Base {
 			Group_Control_Typography::get_type(),
 			[
 				'name' => 'menu_typography',
-				'scheme' => Scheme_Typography::TYPOGRAPHY_1,
+				'scheme' => Global_Typography::TYPOGRAPHY_PRIMARY,
 				'selector' => '{{WRAPPER}} .content-type-menu a',
 			]
 		);
@@ -556,15 +417,15 @@ class Full_Screen_Menu extends Widget_Base {
 				'options' => [
 					'left'    => [
 						'title' => __( 'Left', 'full-screen-menu-for-elementor' ),
-						'icon' => 'fa fa-align-left',
+						'icon' => 'eicon-text-align-left',
 					],
 					'center' => [
 						'title' => __( 'Center', 'full-screen-menu-for-elementor' ),
-						'icon' => 'fa fa-align-center',
+						'icon' => 'eicon-text-align-center',
 					],
 					'right' => [
 						'title' => __( 'Right', 'full-screen-menu-for-elementor' ),
-						'icon' => 'fa fa-align-right',
+						'icon' => 'eicon-text-align-right',
 					],
 				],
 				'default' => 'center',
@@ -577,35 +438,8 @@ class Full_Screen_Menu extends Widget_Base {
 		$this->end_controls_section();
 	}
 
-	/**
-	 * Get available menus.
-	 *
-	 * @since 1.0.0
-	 *
-	 * @access private
-	 */
-	private function get_available_menus() {
-		$menus = wp_get_nav_menus();
-
-		$options = [];
-
-		foreach ( $menus as $menu ) {
-			$options[ $menu->slug ] = $menu->name;
-		}
-
-		return $options;
-	}
-
-	/**
-	 * Render the widget output on the frontend.
-	 *
-	 * Written in PHP and used to generate the final HTML.
-	 *
-	 * @since 1.0.0
-	 *
-	 * @access protected
-	 */
-	protected function render() {
+	protected function render()
+	{
 		$available_menus = $this->get_available_menus();
 
 		if ( ! $available_menus ) {
@@ -674,15 +508,63 @@ class Full_Screen_Menu extends Widget_Base {
 		<?php
 	}
 
-	/**
-	 * Render the widget output in the editor.
-	 *
-	 * Written as a Backbone JavaScript template and used to generate the live preview.
-	 *
-	 * @since 1.0.0
-	 *
-	 * @access protected
-	 */
-	protected function _content_template() {}
+	private function get_saved_data( $type = 'page' )
+	{
+		$templates = $this->get_post_template( $type );
 
+		$options['0'] = __( 'Select Template', 'full-screen-menu-for-elementor' );
+
+		if ( count( $templates ) ) {
+			foreach ( $templates as $template ) {
+				$options[ $template['id'] ] = $template['name'];
+		}
+		} else {
+			$options['0'] = __( 'You haven\'t saved any templates yet.', 'full-screen-menu-for-elementor' );
+		}
+
+		return $options;
+	}
+
+	private function get_post_template( $type = 'page' )
+	{
+		$posts = get_posts(
+			array(
+				'post_type' => 'elementor_library',
+				'orderby' => 'title',
+				'order' => 'ASC',
+				'posts_per_page' => '-1',
+				'tax_query' => array(
+					array(
+						'taxonomy' => 'elementor_library_type',
+						'field' => 'slug',
+						'terms' => $type,
+					),
+				),
+			)
+		);
+
+		$templates = array();
+
+		foreach ( $posts as $post ) {
+			$templates[] = array(
+				'id' => $post->ID,
+				'name' => $post->post_title,
+			);
+		}
+
+		return $templates;
+	}
+
+	private function get_available_menus()
+	{
+		$menus = wp_get_nav_menus();
+
+		$options = [];
+
+		foreach ( $menus as $menu ) {
+			$options[ $menu->slug ] = $menu->name;
+		}
+
+		return $options;
+	}
 }

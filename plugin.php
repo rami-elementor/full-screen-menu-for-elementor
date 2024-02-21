@@ -1,84 +1,61 @@
 <?php
+
 namespace FullScreenMenuForElementor;
 
-use FullScreenMenuForElementor\Widgets\Full_Screen_Menu;
+if ( ! defined( 'ABSPATH' ) ) exit;
 
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+class Plugin
+{
+    private static $_instance = null;
 
-/**
- * Main Plugin Class
- *
- * Register new elementor widget.
- *
- * @since 1.0.0
- */
-class Plugin {
+    public function __construct()
+    {
+        $this->add_actions();
+    }
 
-	/**
-	 * Constructor
-	 *
-	 * @since 1.0.0
-	 *
-	 * @access public
-	 */
-	public function __construct() {
-		$this->add_actions();
-	}
+    public static function instance()
+    {
+        if ( is_null( self::$_instance ) ) {
+            self::$_instance = new self();
+        }
 
-	/**
-	 * Add Actions
-	 *
-	 * @since 1.0.0
-	 *
-	 * @access private
-	 */
-	private function add_actions() {
-		add_action( 'elementor/widgets/widgets_registered', [ $this, 'on_widgets_registered' ] );
+        return self::$_instance;
+    }
 
-		add_action( 'elementor/preview/enqueue_styles', function() {
-			$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
+    private function add_actions()
+    {
+        add_action( 'elementor/widgets/widgets_registered', [ $this, 'register_widgets' ] );
 
-			wp_enqueue_style( 'fsmfe-editor', plugins_url( '/assets/css/editor' . $suffix . '.css', FSMFE__FILE__ ), '', FSMFE_VERSION );
-		} );
+        add_action( 'elementor/editor/after_enqueue_styles', [ $this, 'enqueue_editor_styles' ] );
 
-		add_action( 'elementor/frontend/after_enqueue_styles', function() {
-			$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
+        add_action( 'elementor/frontend/after_enqueue_styles', [ $this, 'enqueue_frontend_styles' ] );
+    }
 
-			wp_register_style( 'fsmfe-frontend', plugins_url( '/assets/css/frontend' . $suffix . '.css', FSMFE__FILE__ ), '', FSMFE_VERSION );
-		} );
-	}
+    public function register_widgets()
+    {
+        $this->include_widgets_files();
 
-	/**
-	 * On Widgets Registered
-	 *
-	 * @since 1.0.0
-	 *
-	 * @access public
-	 */
-	public function on_widgets_registered() {
-		$this->includes();
-		$this->register_widget();
-	}
+        \Elementor\Plugin::instance()->widgets_manager->register_widget_type( new Widgets\FullScreenMenu() );
+    }
 
-	/**
-	 * Includes
-	 *
-	 * @since 1.0.0
-	 *
-	 * @access private
-	 */
-	private function includes() {
-		require __DIR__ . '/widgets/full-screen-menu.php';
-	}
+    private function include_widgets_files()
+    {
+        require __DIR__ . '/widgets/full-screen-menu.php';
+    }
 
-	/**
-	 * Register Widget
-	 *
-	 * @since 1.0.0
-	 *
-	 * @access private
-	 */
-	private function register_widget() {
-		\Elementor\Plugin::instance()->widgets_manager->register_widget_type( new Full_Screen_Menu() );
-	}
+    public function enqueue_editor_styles()
+    {
+        $suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
+
+        wp_enqueue_style( 'full-screen-menu-editor', plugins_url( '/assets/css/editor' . $suffix . '.css', __FILE__ ), [], \FullScreenMenuForElementor::VERSION );
+    }
+
+    public function enqueue_frontend_styles()
+    {
+        $suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
+
+        wp_enqueue_style( 'full-screen-menu-frontend', plugins_url( '/assets/css/frontend' . $suffix . '.css', __FILE__ ), [], \FullScreenMenuForElementor::VERSION );
+    }
 }
+
+Plugin::instance();

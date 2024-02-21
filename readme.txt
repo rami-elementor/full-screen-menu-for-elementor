@@ -1,9 +1,10 @@
 === Full Screen Menu for Elementor ===
-Contributors: solitweb
+Contributors: wepic
 Tags: elementor, pagebuilder, full screen menu, navigation menu, navmenu, nav menu, menus
-Requires at least: 4.9
-Tested up to: 5.2
-Stable tag: 1.0.3
+Requires at least: 5.2
+Tested up to: 6.0
+Stable tag: 1.0.6
+Requires PHP: 7.0
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -28,7 +29,19 @@ This plugin adds a full screen menu widget to the [Elementor Page Builder](https
 1. Backend
 
 == Changelog ==
-= 1.0.2 =
+= 1.0.6 =
+* Fix: deprecated error
+* Fix: align icons
+
+= 1.0.5 =
+* Tweak: Completely rewritten code
+* Fix: widget not found
+
+= 1.0.4 =
+* Fix: deprecated error
+
+== Changelog ==
+= 1.0.3 =
 * Fix: CSS issue
 
 = 1.0.2 =
